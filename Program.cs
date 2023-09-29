@@ -56,8 +56,6 @@ public class PreloadingBenchmark
     [Benchmark]
     public async Task VisitorCheck()
     {
-        var result = await _visitorCheckExecutor.ExecuteAsync("{ productById(id: 1) { id offer { id } } }");
-
-        var json = result.ToJson();
+        await _visitorCheckExecutor.ExecuteAsync("{ productById(id: 1) { id offer { id } } }");
     }
 }
