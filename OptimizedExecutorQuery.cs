@@ -21,7 +21,6 @@ public class OptimizedExecutorQuery
 [ExtendObjectType(typeof(Product))]
 public class OptimizedExecutorProductExtension
 {
-  [PreloadedOffer]
   public Offer GetOffer(Offer? preloadedOffer)
   {
     if (preloadedOffer is not null)
