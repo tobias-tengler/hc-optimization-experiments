@@ -33,7 +33,7 @@ public class PreloadingBenchmark
         _optimizedExecutor = await new ServiceCollection()
             .AddGraphQL()
             .AddOperationCompilerOptimizer<ProductOfferPreloadOptimizer>()
-            .AddParameterExpressionBuilder(ctx => ctx.GetScopedState<Offer>(ResolverContextExtensions.PreloadedOfferKey))
+            // .AddParameterExpressionBuilder(ctx => ctx.GetScopedState<Offer>(ResolverContextExtensions.PreloadedOfferKey))
             .AddQueryType<OptimizedExecutorQuery>()
             .AddTypeExtension<OptimizedExecutorProductExtension>()
             .BuildRequestExecutorAsync();
