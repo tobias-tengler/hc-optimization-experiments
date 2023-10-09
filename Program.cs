@@ -21,21 +21,32 @@ using HotChocolate.Execution;
 BenchmarkRunner.Run<PreloadingBenchmark>();
 
 [MeanColumn, MedianColumn, MemoryDiagnoser]
+[GroupBenchmarksBy(BenchmarkDotNet.Configs.BenchmarkLogicalGroupRule.ByCategory)]
 public class PreloadingBenchmark
 {
     private IRequestExecutor _optimizedExecutor = null!;
     private IRequestExecutor _runtimeSelectionSetCheckExecutor = null!;
     private IRequestExecutor _visitorCheckExecutor = null!;
 
-    private const string _query = """
-    { 
-        productById(id: 1) { 
-            id 
-            offer { 
+    private const string _smallQuery = """
+       {
+            productById(id: 1) { 
                 id
-            } 
-        }
+                a: __typename
+                b: __typename
+                c: __typename
+                d: name
+                e: name
+                f: name
+                offer { 
+                    id
+                } 
+            }
+       } 
+    """;
 
+    private const string _largeQuery = """
+    {
         # Boilerplate to work the Visitor
         a: __schema @skip(if: true) {
             description
@@ -208,6 +219,80 @@ public class PreloadingBenchmark
             }
             }
         }
+
+        # Actual fields we're interested in
+        p1: productById(id: 1) { 
+            id
+            a: __typename
+            b: __typename
+            c: __typename
+            d: name
+            e: name
+            f: name
+            offer { 
+                id
+            } 
+        }
+        p2: productById(id: 2) { 
+            id
+            a: __typename
+            b: __typename
+            c: __typename
+            d: name
+            e: name
+            f: name
+            offer { 
+                id
+            } 
+        }
+        p3: productById(id: 3) { 
+            id 
+            a: __typename
+            b: __typename
+            c: __typename
+            d: name
+            e: name
+            f: name
+            offer { 
+                id
+            } 
+        }
+        p4: productById(id: 4) { 
+            id
+            a: __typename
+            b: __typename
+            c: __typename
+            d: name
+            e: name
+            f: name
+            offer { 
+                id
+            } 
+        }
+        p5: productById(id: 5) { 
+            id
+            a: __typename
+            b: __typename
+            c: __typename
+            d: name
+            e: name
+            f: name
+            offer { 
+                id
+            } 
+        }
+        p6: productById(id: 6) { 
+            id 
+            a: __typename
+            b: __typename
+            c: __typename
+            d: name
+            e: name
+            f: name
+            offer { 
+                id
+            }
+        }
     }
     """;
 
@@ -240,21 +325,39 @@ public class PreloadingBenchmark
         await _visitorCheckExecutor.ExecuteAsync("{ __typename }");
     }
 
-    [Benchmark]
-    public async Task OptimizedExecutor()
+    [Benchmark(Baseline = true), BenchmarkCategory("Small Query")]
+    public async Task RuntimeSelectionSetCheck_SmallQuery()
     {
-        await _optimizedExecutor.ExecuteAsync(_query);
+        await _runtimeSelectionSetCheckExecutor.ExecuteAsync(_smallQuery);
     }
 
-    [Benchmark]
-    public async Task RuntimeSelectionSetCheck()
+    [Benchmark, BenchmarkCategory("Small Query")]
+    public async Task OperationCompilerOptimizer_SmallQuery()
     {
-        await _runtimeSelectionSetCheckExecutor.ExecuteAsync(_query);
+        await _optimizedExecutor.ExecuteAsync(_smallQuery);
     }
 
-    [Benchmark]
-    public async Task VisitorCheck()
+    [Benchmark, BenchmarkCategory("Small Query")]
+    public async Task RuntimeVisitorCheck_SmallQuery()
     {
-        await _visitorCheckExecutor.ExecuteAsync(_query);
+        await _visitorCheckExecutor.ExecuteAsync(_smallQuery);
+    }
+
+    [Benchmark(Baseline = true), BenchmarkCategory("Large Query")]
+    public async Task RuntimeSelectionSetCheck_LargeQuery()
+    {
+        await _runtimeSelectionSetCheckExecutor.ExecuteAsync(_largeQuery);
+    }
+
+    [Benchmark, BenchmarkCategory("Large Query")]
+    public async Task OperationCompilerOptimizer_LargeQuery()
+    {
+        await _optimizedExecutor.ExecuteAsync(_largeQuery);
+    }
+
+    [Benchmark, BenchmarkCategory("Large Query")]
+    public async Task RuntimeVisitorCheck_LargeQuery()
+    {
+        await _visitorCheckExecutor.ExecuteAsync(_largeQuery);
     }
 }
