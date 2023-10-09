@@ -20,7 +20,7 @@ using HotChocolate.Execution;
 
 BenchmarkRunner.Run<PreloadingBenchmark>();
 
-[MemoryDiagnoser]
+[MeanColumn, MedianColumn, MemoryDiagnoser]
 public class PreloadingBenchmark
 {
     private IRequestExecutor _optimizedExecutor = null!;
