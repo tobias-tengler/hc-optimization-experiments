@@ -27,6 +27,190 @@ public class PreloadingBenchmark
     private IRequestExecutor _runtimeSelectionSetCheckExecutor = null!;
     private IRequestExecutor _visitorCheckExecutor = null!;
 
+    private const string _query = """
+    { 
+        productById(id: 1) { 
+            id 
+            offer { 
+                id
+            } 
+        }
+
+        # Boilerplate to work the Visitor
+        a: __schema @skip(if: true) {
+            description
+            directives {
+            args {
+                defaultValue
+                deprecationReason
+                description
+                isDeprecated
+                name
+                type {
+                description
+                enumValues {
+                    deprecationReason
+                    isDeprecated
+                    description
+                    name
+                }
+                fields {
+                    args {
+                    defaultValue
+                    deprecationReason
+                    }
+                }
+                }
+            }
+            }
+            types {
+            kind
+            name
+            description
+            specifiedByURL
+            fields {
+                name
+                description
+                args {
+                name
+                description
+                defaultValue
+                isDeprecated
+                }
+                type {
+                name
+                specifiedByURL
+                fields {
+                    name
+                    description
+                    type {
+                    kind
+                    name
+                    }
+                }
+                }
+                isDeprecated
+                deprecationReason
+            }
+            }
+        }
+        b: __schema @skip(if: true) {
+            description
+            directives {
+            args {
+                defaultValue
+                deprecationReason
+                description
+                isDeprecated
+                name
+                type {
+                description
+                enumValues {
+                    deprecationReason
+                    isDeprecated
+                    description
+                    name
+                }
+                fields {
+                    args {
+                    defaultValue
+                    deprecationReason
+                    }
+                }
+                }
+            }
+            }
+            types {
+            kind
+            name
+            description
+            specifiedByURL
+            fields {
+                name
+                description
+                args {
+                name
+                description
+                defaultValue
+                isDeprecated
+                }
+                type {
+                name
+                specifiedByURL
+                fields {
+                    name
+                    description
+                    type {
+                    kind
+                    name
+                    }
+                }
+                }
+                isDeprecated
+                deprecationReason
+            }
+            }
+        }
+        c: __schema @skip(if: true) {
+            description
+            directives {
+            args {
+                defaultValue
+                deprecationReason
+                description
+                isDeprecated
+                name
+                type {
+                description
+                enumValues {
+                    deprecationReason
+                    isDeprecated
+                    description
+                    name
+                }
+                fields {
+                    args {
+                    defaultValue
+                    deprecationReason
+                    }
+                }
+                }
+            }
+            }
+            types {
+            kind
+            name
+            description
+            specifiedByURL
+            fields {
+                name
+                description
+                args {
+                name
+                description
+                defaultValue
+                isDeprecated
+                }
+                type {
+                name
+                specifiedByURL
+                fields {
+                    name
+                    description
+                    type {
+                    kind
+                    name
+                    }
+                }
+                }
+                isDeprecated
+                deprecationReason
+            }
+            }
+        }
+    }
+    """;
+
     [GlobalSetup]
     public async Task GlobalSetup()
     {
@@ -59,18 +243,18 @@ public class PreloadingBenchmark
     [Benchmark]
     public async Task OptimizedExecutor()
     {
-        await _optimizedExecutor.ExecuteAsync("{ productById(id: 1) { id offer { id } } }");
+        await _optimizedExecutor.ExecuteAsync(_query);
     }
 
     [Benchmark]
     public async Task RuntimeSelectionSetCheck()
     {
-        await _runtimeSelectionSetCheckExecutor.ExecuteAsync("{ productById(id: 1) { id offer { id } } }");
+        await _runtimeSelectionSetCheckExecutor.ExecuteAsync(_query);
     }
 
     [Benchmark]
     public async Task VisitorCheck()
     {
-        await _visitorCheckExecutor.ExecuteAsync("{ productById(id: 1) { id offer { id } } }");
+        await _visitorCheckExecutor.ExecuteAsync(_query);
     }
 }

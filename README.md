@@ -1,5 +1,5 @@
-| Method                   |     Mean |     Error |    StdDev |   Median |   Gen0 |   Gen1 | Allocated |
-| ------------------------ | -------: | --------: | --------: | -------: | -----: | -----: | --------: |
-| OptimizedExecutor        | 3.947 μs | 0.0160 μs | 0.0150 μs | 3.946 μs | 0.0381 | 0.0076 |   4.65 KB |
-| RuntimeSelectionSetCheck | 3.944 μs | 0.0137 μs | 0.0115 μs | 3.944 μs | 0.0458 |      - |   4.58 KB |
-| VisitorCheck             | 4.411 μs | 0.0173 μs | 0.0153 μs | 4.406 μs | 0.0458 | 0.0076 |   4.76 KB |
+| Method                   |     Mean |    Error |   StdDev |   Median |   Gen0 |   Gen1 | Allocated |
+| ------------------------ | -------: | -------: | -------: | -------: | -----: | -----: | --------: |
+| OptimizedExecutor        | 10.93 μs | 0.055 μs | 0.052 μs | 10.95 μs | 0.0763 | 0.0153 |    8.3 KB |
+| RuntimeSelectionSetCheck | 11.08 μs | 0.038 μs | 0.034 μs | 11.09 μs | 0.0763 |      - |   8.23 KB |
+| VisitorCheck             | 11.28 μs | 0.075 μs | 0.067 μs | 11.25 μs | 0.0763 |      - |   8.41 KB |
