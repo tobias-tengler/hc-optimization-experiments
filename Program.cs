@@ -1,7 +1,22 @@
-using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
 using HotChocolate.Execution;
-using BenchmarkDotNet.Configs;
+
+// var builder = WebApplication.CreateBuilder(args);
+
+// builder.Services
+//     .AddGraphQLServer()
+//     .InitializeOnStartup()
+//     .AddOperationCompilerOptimizer<ProductOfferPreloadOptimizer>()
+//     .AddParameterExpressionBuilder(ctx => ctx.GetScopedState<Offer>(ResolverContextExtensions.PreloadedOfferKey))
+//     .AddQueryType<OptimizedExecutorQuery>()
+//     .AddTypeExtension<OptimizedExecutorProductExtension>();
+
+// var app = builder.Build();
+
+// app.MapGraphQL();
+
+// app.RunWithGraphQLCommands(args);
 
 BenchmarkRunner.Run<PreloadingBenchmark>();
 
@@ -12,13 +27,13 @@ public class PreloadingBenchmark
     private IRequestExecutor _runtimeSelectionSetCheckExecutor = null!;
     private IRequestExecutor _visitorCheckExecutor = null!;
 
-
     [GlobalSetup]
     public async Task GlobalSetup()
     {
         _optimizedExecutor = await new ServiceCollection()
             .AddGraphQL()
             .AddOperationCompilerOptimizer<ProductOfferPreloadOptimizer>()
+            .AddParameterExpressionBuilder(ctx => ctx.GetScopedState<Offer>(ResolverContextExtensions.PreloadedOfferKey))
             .AddQueryType<OptimizedExecutorQuery>()
             .AddTypeExtension<OptimizedExecutorProductExtension>()
             .BuildRequestExecutorAsync();

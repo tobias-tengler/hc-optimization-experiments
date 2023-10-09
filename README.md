@@ -11,6 +11,6 @@ Apple M2 Max, 1 CPU, 12 logical and 12 physical cores
 
 | Method                   |     Mean |     Error |    StdDev |   Gen0 |   Gen1 | Allocated |
 | ------------------------ | -------: | --------: | --------: | -----: | -----: | --------: |
-| OptimizedExecutor        | 3.954 μs | 0.0186 μs | 0.0174 μs | 0.0458 |      - |   4.67 KB |
-| RuntimeSelectionSetCheck | 3.941 μs | 0.0227 μs | 0.0212 μs | 0.0381 | 0.0076 |   4.58 KB |
-| VisitorCheck             | 4.741 μs | 0.0616 μs | 0.0546 μs | 0.0458 | 0.0076 |   4.76 KB |
+| OptimizedExecutor        | 3.958 μs | 0.0233 μs | 0.0218 μs | 0.0381 | 0.0076 |   4.64 KB |
+| RuntimeSelectionSetCheck | 3.988 μs | 0.0593 μs | 0.0555 μs | 0.0381 | 0.0076 |   4.58 KB |
+| VisitorCheck             | 4.430 μs | 0.0260 μs | 0.0243 μs | 0.0458 | 0.0076 |   4.76 KB |

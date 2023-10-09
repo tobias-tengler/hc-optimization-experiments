@@ -1,5 +1,5 @@
+using HotChocolate.Execution.Processing;
 using HotChocolate.Resolvers;
-using Microsoft.Diagnostics.Tracing.Parsers.Clr;
 
 public static class ResolverContextExtensions
 {
@@ -7,7 +7,9 @@ public static class ResolverContextExtensions
   public const string PreloadedOfferKey = "preloadedOffer";
 
   public static bool ShouldFetchOffer_Optimizer(this IResolverContext context)
-    => context.GetLocalStateOrDefault<bool>(ShouldFetchOfferKey);
+    => context.Selection is Selection typedSelection &&
+      typedSelection.CustomOptions.HasFlag(Selection.CustomOptionsFlags.Option1);
+
 
   public static bool ShouldFetchOffer_Runtime(this IResolverContext context)
   {

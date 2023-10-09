@@ -1,6 +1,7 @@
 using HotChocolate.Execution.Processing;
 using HotChocolate.Language;
 using HotChocolate.Resolvers;
+using static HotChocolate.Execution.Processing.Selection;
 
 public class OptimizedExecutorQuery
 {
@@ -20,8 +21,13 @@ public class OptimizedExecutorQuery
 [ExtendObjectType(typeof(Product))]
 public class OptimizedExecutorProductExtension
 {
-  public Offer GetOffer()
+  public Offer GetOffer(Offer? preloadedOffer)
   {
+    if (preloadedOffer is not null)
+    {
+      return preloadedOffer;
+    }
+
     return new Offer(2, "Apple");
   }
 }
@@ -53,7 +59,7 @@ public class ProductOfferPreloadOptimizer : IOperationOptimizer
       return;
     }
 
-    OptimizeProductResolution(operation, selection, context);
+    OptimizeProductResolution(operation, selection);
 
     if (selection.SelectionSet is null)
     {
@@ -71,7 +77,7 @@ public class ProductOfferPreloadOptimizer : IOperationOptimizer
     }
   }
 
-  private void OptimizeProductResolution(IOperation operation, ISelection selection, OperationOptimizerContext context)
+  private void OptimizeProductResolution(IOperation operation, ISelection selection)
   {
     if (selection.SelectionSet is null || selection.Type is not IObjectType productType)
     {
@@ -87,34 +93,9 @@ public class ProductOfferPreloadOptimizer : IOperationOptimizer
       return;
     }
 
-    var productPipeline = selection.ResolverPipeline ?? context.CompileResolverPipeline(selection.Field, selection.SyntaxNode);
-
-    context.SetResolver(selection, WrapProductPipeline(productPipeline));
-
-    var offerPipeline = offerSelection.ResolverPipeline ?? context.CompileResolverPipeline(offerSelection.Field, offerSelection.SyntaxNode);
-
-    context.SetResolver(offerSelection, WrapOfferPipeline(offerPipeline));
-
-    static FieldDelegate WrapProductPipeline(FieldDelegate next) =>
-        ctx =>
-        {
-          ctx.SetLocalState(ResolverContextExtensions.ShouldFetchOfferKey, true);
-
-          return next(ctx);
-        };
-
-    // todo: this could lead to bugs, rather read from the context inside of the resolver
-    static FieldDelegate WrapOfferPipeline(FieldDelegate next) =>
-      ctx =>
-      {
-        if (ctx.ScopedContextData.TryGetValue(ResolverContextExtensions.PreloadedOfferKey, out var offer))
-        {
-          ctx.Result = offer;
-
-          return ValueTask.CompletedTask;
-        }
-
-        return next(ctx);
-      };
+    if (selection is Selection typedSelection)
+    {
+      typedSelection.SetOption(CustomOptionsFlags.Option1);
+    }
   }
 }
