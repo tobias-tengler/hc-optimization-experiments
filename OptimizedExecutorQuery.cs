@@ -59,7 +59,7 @@ public class ProductOfferPreloadOptimizer : IOperationOptimizer
       return;
     }
 
-    OptimizeProductResolution(operation, selection);
+    OptimizeProductResolution(operation, selection, context);
 
     if (selection.SelectionSet is null)
     {
@@ -77,7 +77,7 @@ public class ProductOfferPreloadOptimizer : IOperationOptimizer
     }
   }
 
-  private void OptimizeProductResolution(IOperation operation, ISelection selection)
+  private void OptimizeProductResolution(IOperation operation, ISelection selection, OperationOptimizerContext context)
   {
     if (selection.SelectionSet is null || selection.Type is not IObjectType productType)
     {
@@ -93,9 +93,24 @@ public class ProductOfferPreloadOptimizer : IOperationOptimizer
       return;
     }
 
-    if (selection is Selection typedSelection)
+    if (selection is not Selection typedSelection)
     {
-      typedSelection.SetOption(CustomOptionsFlags.Option1);
+      return;
     }
+
+    typedSelection.SetOption(CustomOptionsFlags.Option1);
+
+    context.SetResolver(offerSelection, null, pureResolver: RetrieveOfferFromScopedState());
+
+    static PureFieldDelegate RetrieveOfferFromScopedState() =>
+      ctx =>
+      {
+        if (ctx.ScopedContextData.TryGetValue(ResolverContextExtensions.PreloadedOfferKey, out var offer))
+        {
+          return offer;
+        }
+
+        throw new InvalidOperationException();
+      };
   }
 }
